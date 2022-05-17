@@ -5,6 +5,7 @@ Library used to parse M3U8 playlist.   Currently only supports from_uri.
 ## Dependency 
 In your Cargo.toml:
 ```
+[dependencies]
 m3u8parse = { git = "https://github.com/justmike2000/m3u8parse/" }
 ```
 
