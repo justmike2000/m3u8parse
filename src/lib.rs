@@ -116,7 +116,7 @@ impl M3U8 {
         Ok(())
     }
 
-    /// Parses sinlge KEY=VALUE
+    /// Parses single KEY=VALUE line
     fn get_key_value_pair(item: &str) -> Option<(String, String)> {
         let mut attr = item.split('=');
         let key = match attr.next() {
@@ -149,7 +149,7 @@ impl M3U8 {
         (tag, data)
     }
 
-    /// Pasrse and match by our tag types
+    /// Parse and match by our tag types
     fn parse(&mut self, lines: &[String]) {
         let mut iter_lines = lines.iter();
         while let Some(line) = iter_lines.next() {
