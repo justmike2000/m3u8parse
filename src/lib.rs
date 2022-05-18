@@ -193,6 +193,39 @@ impl M3U8 {
         }
     }
 
+    /// Used to sort Parsed Vectors
+    fn sort_list_by_key(list: &mut Vec<HashMap<String, String>>, sort_by: &str) {
+        list.sort_by(|a, b| {
+            let item1 = match a.get(sort_by) {
+                Some(item1) => item1,
+                None => "",
+            };
+            let item2 = match b.get(sort_by) {
+                Some(item1) => item1,
+                None => "",
+            };
+            item1.cmp(item2)
+        });
+    }
+
+    /// Returns Cloned Vec of media resources sorted by provided key
+    pub fn get_media_resources(&mut self, sort_by: &str) -> Vec<HashMap<String, String>> {
+        M3U8::sort_list_by_key(&mut self.media_resources, sort_by);
+        self.media_resources.clone()
+    }
+
+    /// Returns Cloned Vec of media tags sorted by provided key
+    pub fn get_media_tags(&mut self, sort_by: &str) -> Vec<HashMap<String, String>> {
+        M3U8::sort_list_by_key(&mut self.media_tags, sort_by);
+        self.media_tags.clone()
+    }
+
+    /// Returns Cloned Vec of variant streams sorted by provided key
+    pub fn get_variant_streams(&mut self, sort_by: &str) -> Vec<HashMap<String, String>> {
+        M3U8::sort_list_by_key(&mut self.variant_streams, sort_by);
+        self.variant_streams.clone()
+    }
+
     /// Takes URI return parsed M3U8 otherwise raises ParseError
     pub fn from_uri(uri: &str) -> Result<M3U8, ParseError> {
         let respose = reqwest::blocking::get(uri)?;
@@ -224,12 +257,11 @@ mod tests {
 
         assert!(result.is_ok());
 
-        let parsed = result.unwrap();
+        let mut parsed = result.unwrap();
 
         assert_eq!(parsed.version, "2");
         assert_eq!(parsed.independent_segments, true);
         assert_eq!(parsed.media_tags.len(), 4);
-
         assert_eq!(
             parsed.media_tags.first().unwrap().get("TYPE"),
             Some(&"AUDIO".to_string())
@@ -248,6 +280,27 @@ mod tests {
             parsed.media_tags.first().unwrap().get("URI"),
             Some(&"audio/unenc/aac_128k/vod.m3u8".to_string())
         );
+
+        // Test fetch and sorting media resources
+        let media_resources = parsed.get_media_resources("BANDWIDTH");
+        assert_eq!(media_resources.first().unwrap()["BANDWIDTH"], "222552");
+        assert_eq!(media_resources.last().unwrap()["BANDWIDTH"], "77758");
+        // Reverse and still see if in order
+        parsed.media_resources.reverse();
+        let media_resources = parsed.get_media_resources("BANDWIDTH");
+        assert_eq!(media_resources.first().unwrap()["BANDWIDTH"], "222552");
+        assert_eq!(media_resources.last().unwrap()["BANDWIDTH"], "77758");
+
+        // Test fetch and sorting media streams
+        parsed.media_tags.reverse();
+        let media_tags = parsed.get_media_tags("CHANNELS");
+        assert_eq!(media_tags.first().unwrap()["CHANNELS"], "16/JOC");
+        assert_eq!(media_tags.last().unwrap()["CHANNELS"], "6");
+
+        // Test fetch and sorting media streams
+        let varian_streams = parsed.get_variant_streams("BANDWIDTH");
+        assert_eq!(varian_streams.first().unwrap()["BANDWIDTH"], "10429877");
+        assert_eq!(varian_streams.last().unwrap()["BANDWIDTH"], "9661857");
     }
 
     #[test]
