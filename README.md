@@ -19,7 +19,7 @@ let uri = "http://<domain>/path/playlist.m3u8";
 let parsed_m3u8 = M3U8::from_uri(uri).unwrap();
 ```
 
-Supports fetching media tags, media resources, and variant streams:
+Supports fetching media tags, media resources, and variant streams.  Provide a key to sort the results by:
 
 ```
 let media_tags = parsed.get_media_tags("CHANNELS");
