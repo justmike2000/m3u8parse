@@ -297,10 +297,10 @@ mod tests {
         assert_eq!(media_tags.first().unwrap()["CHANNELS"], "16/JOC");
         assert_eq!(media_tags.last().unwrap()["CHANNELS"], "6");
 
-        // Test fetch and sorting media streams
-        let varian_streams = parsed.get_variant_streams("BANDWIDTH");
-        assert_eq!(varian_streams.first().unwrap()["BANDWIDTH"], "10429877");
-        assert_eq!(varian_streams.last().unwrap()["BANDWIDTH"], "9661857");
+        // Test fetch and sorting variant streams
+        let variant_streams = parsed.get_variant_streams("BANDWIDTH");
+        assert_eq!(variant_streams.first().unwrap()["BANDWIDTH"], "10429877");
+        assert_eq!(variant_streams.last().unwrap()["BANDWIDTH"], "9661857");
     }
 
     #[test]
